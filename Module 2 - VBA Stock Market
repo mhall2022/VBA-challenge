@@ -1,0 +1,183 @@
+Sub Stockmarket():
+
+
+Dim ws As Worksheet
+
+For Each ws In Worksheets
+
+ws.Activate
+
+ws.Range("A1").Value = "TICKER"
+ws.Range("B1").Value = "DATE"
+ws.Range("C1").Value = "START"
+ws.Range("D1").Value = "HIGH"
+ws.Range("E1").Value = "LOW"
+ws.Range("F1").Value = "END"
+ws.Range("G1").Value = "VOL"
+ws.Range("K1").Value = "TICKER"
+ws.Range("L1").Value = "YEARLYCHANGE"
+ws.Range("M1").Value = "PERCENTCHANGE"
+ws.Range("N1").Value = "TOTALSTOCKVOLUME"
+
+Next
+
+End Sub
+
+Sub SUMMARY_TABLE():
+
+Dim ws As Worksheet
+Dim Ticker_name As String
+Dim Ticker_count As Long
+Dim Ticker_Total As Double
+Dim start_price As Double
+Dim end_price As Double
+Dim yearly_change As Double
+Dim percet_change As Double
+Dim i As Long
+
+
+For Each ws In Worksheets
+
+    'Identify the Lastrow
+    
+Lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+
+'Loop through all Ticker rows
+
+Dim Summary_table_row As Integer
+Summary_table_row = 2
+
+For i = 2 To Lastrow
+
+    Ticker_Total = 0
+    
+'Confirm if Ticker is different
+
+If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+
+'Ticker name
+
+    Ticker_name = ws.Cells(i, 1).Value
+    
+    Ticker_Total = Ticker_Total + ws.Cells(i, 7).Value
+    
+    start_price = ws.Cells(i, 3).Value
+    
+    end_price = ws.Cells(Lastrow, 6).Value
+    
+    yearly_change = end_price - start_price
+    
+    Percent_change = Round(((yearly_change / start_price) * 100), 2)
+    
+    
+'Add Ticker name to summary
+ws.Range("K" & Summary_table_row).Value = Ticker_name
+
+'Add volume of stocks to summary
+ws.Range("N" & Summary_table_row).Value = Ticker_Total
+
+'Add yearly change to summary
+ws.Range("L" & Summary_table_row).Value = yearly_change
+
+'Add percent change to summary
+ws.Range("M" & Summary_table_row).Value = "%" & Percent_change
+
+
+'Yearly_change scenarios
+
+If ws.Range("L" & Summary_table_row).Value > 0 Then
+
+ws.Range("L" & Summary_table_row).Interior.ColorIndex = 4
+
+ElseIf ws.Range("L" & Summary_table_row).Value < 0 Then
+
+ws.Range("L" & Summary_table_row).Interior.ColorIndex = 3
+
+ElseIf ws.Range("L" & Summary_table_row).Value = 0 Then
+
+ws.Range("L" & Summary_table_row).Interior.ColorIndex = 0
+
+End If
+
+
+Summary_table_row = Summary_table_row + 1
+
+Ticker_Total = 0
+
+Else
+
+Ticker_Total = Ticker_Total + ws.Cells(i, 7).Value
+
+End If
+
+Next i
+
+    Next ws
+      
+    
+End Sub
+
+
+Sub Greatest_Lowest():
+
+Dim ws As Worksheet
+
+Dim Greatest_Percent_Increase As String
+Dim Greatest_Percent_Decrease As String
+Dim Greatest_Total_volume As String
+Dim Ticker As String
+Dim Value As String
+
+For Each ws In Worksheets
+
+ws.Range("Q2") = "Greatest_Percent_Increase"
+ws.Range("Q3") = "Greatest_Percent_Decrease"
+ws.Range("Q4") = "Greatest_Total_volume"
+ws.Range("R1") = "Ticker"
+ws.Range("S1") = "Value"
+
+Next
+
+
+For Each ws In Worksheets
+
+Dim Max_Pct_increase As Double
+Dim Max_Pct_decrease As Double
+Dim Max_total_volume As Long
+Dim rng1 As Range
+Dim rng2 As Range
+Dim i As Long
+Dim n As Long
+n = 4000
+
+For i = 2 To n
+
+If ws.Cells(i, 13).Value = Max_Pct_increase Then
+
+ws.Range("S2").Value = ws.Cells(i, 13).Value
+ws.Range("R2").Value = ws.Cells(i, 11).Value
+
+End If
+
+
+If ws.Cells(i, 13).Value = Max_Pct_decrease Then
+
+ws.Range("S3").Value = ws.Cells(i, 13).Value
+ws.Range("R3").Value = ws.Cells(i, 11).Value
+
+End If
+
+
+If ws.Cells(i, 14).Value = Max_total_volume Then
+
+ws.Range("S4").Value = ws.Cells(i, 14).Value
+ws.Range("R4").Value = ws.Cells(i, 11).Value
+
+End If
+
+
+Next i
+
+Next
+
+End Sub
